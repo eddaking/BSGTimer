@@ -20,18 +20,20 @@
         }
     </style>
     <script>
-        //Modes
-            //0=clock
-            //1=timer
-            //2=countdown
         var mode=0;
+        //Modes
+		const clock=0;
+		const countdownFrom=1;
+		const countdownTo=2;
+		const countdownFor=3;
+		
         function setMode(newMode)
         {
-	    mode=newMode;
+			mode=newMode;
         }
         //for the clock this will just be the time
-        var timeTimer=    new Date(Date.UTC(2020,0,31,16,30,0,0));
-        var timeCountdown=new Date(Date.UTC(2020,0,31,16,30,0,0));
+		//YEAR,Month(0 based),day,hour,min,second,ms
+        var timeCountdownTarget=new Date(Date.UTC(2020,0,31,16,30,0,0));
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         function drawSegments(ctx,internalRadius,length,segments,showsegments,forward)
         {
@@ -59,19 +61,22 @@
             ctx.clearRect(canvas.width/-2, canvas.height/-2, canvas.width, canvas.height);
             var d=new Date();
             var forward=true;
-            if(mode==1)     {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-time.getTime()));}
-            else if(mode==2 || mode==3)
+            if(mode==clock)
+			{
+				d = new Date(Date.now());
+			}
+            else if(mode==countdownFrom || mode==countdownTo || mode==countdownFor)
             {
-                //switch modes once we pass the 0
-                if(Date.now()>time.getTime())
+                //switch modes once we pass the target time
+                if(Date.now()>timeCountdownTarget.getTime())
                 {
-                    d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-time.getTime()));
+                    d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeCountdownTarget.getTime()));
                 }
                 else
                 {
-                    d = new Date(Date.UTC(0,0,0,0,0,0,time.getTime()-d.getTime()));
+                    d = new Date(Date.UTC(0,0,0,0,0,0,timeCountdownTarget.getTime()-d.getTime()));
                     forward=false;
-		}
+				}
             }
             drawSegments(ctx,150,25,60,d.getSeconds(),forward);
             drawSegments(ctx,100,45,60,d.getMinutes(),forward);
@@ -94,7 +99,7 @@
         <label for="Timer">Timer</label><br>
         <input type="radio" id="CountdownTo" name="mode" value=2 onchange="setMode(2)">
         <label for="CountdownTo">Countdown to time</label>
-        <input type="radio" id="CountdownFor" name="mode" value=2 onchange="setMode(3)">
+        <input type="radio" id="CountdownFor" name="mode" value=3 onchange="setMode(3)">
         <label for="CountdownFor">Countdown for time</label>
     </form> 
     <script>
