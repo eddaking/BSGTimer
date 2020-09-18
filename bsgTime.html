@@ -1,105 +1,168 @@
 <html>
 <head>
-    <style>
-        body{
-            background-color: #000000;
-        }
-	label{
-	    color: #ffffff;
-	}
-	form{
-	    position: relative;
-	}
-        #myCanvas{
-            margin: 0;
-            position: absolute;
-            top: 50%;
-	    left: 50%;
-            margin-right: -50%;
-            transform: translate(-50%, -50%)
-        }
-    </style>
-    <script>
-        //Modes
-            //0=clock
-            //1=timer
-            //2=countdown
-        var mode=0;
-        function setMode(newMode)
-        {
-	    mode=newMode;
-        }
-        //for the clock this will just be the time
-        var timeTimer=    new Date(Date.UTC(2020,0,31,16,30,0,0));
-        var timeCountdown=new Date(Date.UTC(2020,0,31,16,30,0,0));
-        //new Date(year, month, day, hours, minutes, seconds, milliseconds)
-        function drawSegments(ctx,internalRadius,length,segments,showsegments,forward)
-        {
-            var angle=(Math.PI*2)/segments;
-            var maxWidth=0.76*((internalRadius+length)*2*Math.PI)/segments;
-            var minWidth=0.76*(internalRadius*2*Math.PI)/segments;
-            for (let index = 1; index <= segments; index++) {
-                if((forward==true & index <= showsegments) | (forward==false & index > segments-showsegments) ){
-                    ctx.fillStyle = '#F39F21';
-                    ctx.beginPath();
-                    ctx.moveTo(minWidth/-2,internalRadius*-1);
-                    ctx.lineTo(maxWidth/-2,(internalRadius+length)*-1);
-                    ctx.lineTo(maxWidth/2,(internalRadius+length)*-1);
-                    ctx.lineTo(minWidth/2,internalRadius*-1);
-                    ctx.lineTo(minWidth/-2,internalRadius*-1);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                ctx.rotate(angle);
-            }
-        }
-        function drawCowntdown(){
-            var canvas=document.getElementById("myCanvas");
-            var ctx = canvas.getContext('2d');
-            ctx.clearRect(canvas.width/-2, canvas.height/-2, canvas.width, canvas.height);
-            var d=new Date();
-            var forward=true;
-            if(mode==1)     {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-time.getTime()));}
-            else if(mode==2 || mode==3)
-            {
-                //switch modes once we pass the 0
-                if(Date.now()>time.getTime())
-                {
-                    d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-time.getTime()));
-                }
-                else
-                {
-                    d = new Date(Date.UTC(0,0,0,0,0,0,time.getTime()-d.getTime()));
-                    forward=false;
+	<style>
+		body
+		{
+			background-color: #000000;
 		}
-            }
-            drawSegments(ctx,150,25,60,d.getSeconds(),forward);
-            drawSegments(ctx,100,45,60,d.getMinutes(),forward);
-            drawSegments(ctx,50 ,45,24,d.getHours()  ,forward);
-        }
-    </script>
+		label
+		{
+			color: #ffffff;
+		}
+		form
+		{
+			position: relative;
+		}
+		#myCanvas
+		{
+			margin: 0;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-right: -50%;
+			transform: translate(-50%, -50%)
+		}
+	</style>
+	<script>
+		//Modes
+			//0=clock
+			//1=timer
+			//2=countdown
+		var mode=0;
+		var clockHours=12;
+
+		function updateSettings()
+		{
+			setClockHours();
+			updateMode();
+		}
+
+		function setClockHours()
+		{
+			clockHours=getRadioCheckedValue("ClockType","time");
+		}
+
+		function updateMode()
+		{
+			mode=getRadioCheckedValue("ClockType","mode");
+			showTimescale();
+		}
+
+		function getRadioCheckedValue(formName,radioName)
+		{
+			var oRadio = document.getElementById(formName);
+			for(var i = 0; i < oRadio.length; i++)
+			{
+				if(oRadio[i].checked && oRadio[i].name==radioName){return oRadio[i].value;}
+			}
+			return '';
+		}
+
+		function showTimescale()
+		{
+			if(mode==0)
+			{
+				document.getElementById("ClockTimescaleSection").style.display = "inline";
+			}
+			else
+			{
+				document.getElementById("ClockTimescaleSection").style.display = "none";
+			}
+		}
+		//for the clock this will just be the time
+		var timeTimer=	new Date(Date.UTC(2020,0,31,16,30,0,0));
+		var timeCountdown=new Date(Date.UTC(2020,0,31,16,30,0,0));
+		//new Date(year, month, day, hours, minutes, seconds, milliseconds)
+		function drawSegments(ctx,internalRadius,length,segments,showsegments,forward)
+		{
+			var angle=(Math.PI*2)/segments;
+			var maxWidth=0.76*((internalRadius+length)*2*Math.PI)/segments;
+			var minWidth=0.76*(internalRadius*2*Math.PI)/segments;
+			for (let index = 1; index <= segments; index++) {
+				if((forward==true & index <= showsegments) | (forward==false & index > segments-showsegments) ){
+					ctx.fillStyle = '#F39F21';
+					ctx.beginPath();
+					ctx.moveTo(minWidth/-2,internalRadius*-1);
+					ctx.lineTo(maxWidth/-2,(internalRadius+length)*-1);
+					ctx.lineTo(maxWidth/2,(internalRadius+length)*-1);
+					ctx.lineTo(minWidth/2,internalRadius*-1);
+					ctx.lineTo(minWidth/-2,internalRadius*-1);
+					ctx.closePath();
+					ctx.fill();
+				}
+				ctx.rotate(angle);
+			}
+		}
+		function drawCowntdown(){
+			var canvas=document.getElementById("myCanvas");
+			var ctx = canvas.getContext('2d');
+			ctx.clearRect(canvas.width/-2, canvas.height/-2, canvas.width, canvas.height);
+			var d=new Date();
+			var forward=true;
+			if(mode==1)	 {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeTimer.getTime()));}
+			else if(mode==2 || mode==3)
+			{
+				//switch modes once we pass the 0
+				if(Date.now()>timeCountdown.getTime())
+				{
+					d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeCountdown.getTime()));
+				}
+				else
+				{
+					d = new Date(Date.UTC(0,0,0,0,0,0,timeCountdown.getTime()-d.getTime()));
+					forward=false;
+				}
+			}
+			drawSegments(ctx,150,25,60,d.getSeconds(),forward);
+			drawSegments(ctx,100,45,60,d.getMinutes(),forward);
+			if(mode==0)
+			{
+				drawSegments(ctx,50 ,45,clockHours,d.getHours()%clockHours,forward);
+			}
+			else
+			{
+				drawSegments(ctx,50 ,45,24,d.getHours(),forward);
+			}
+		}
+	</script>
 </head>
 <body>
-    <canvas id="myCanvas" width="500" height="500"></canvas>
-    <script>
-        var ctx = document.getElementById("myCanvas").getContext('2d');
-        //since rotated around 0,0 - we now need to adjust the location
-        ctx.translate(250,250);
-        setInterval(drawCowntdown, 100);
-    </script>
-    <form>
-        <input type="radio" id="Clock" name="mode" value=0 checked onchange="setMode(0)">
-        <label for="Clock">Clock</label><br>
-	<input type="radio" id="Timer" name="mode" value=1 onchange="setMode(1)">
-        <label for="Timer">Timer</label><br>
-        <input type="radio" id="CountdownTo" name="mode" value=2 onchange="setMode(2)">
-        <label for="CountdownTo">Countdown to time</label>
-        <input type="radio" id="CountdownFor" name="mode" value=2 onchange="setMode(3)">
-        <label for="CountdownFor">Countdown for time</label>
-    </form> 
-    <script>
-        //Countdown would need to target both a time and x time from now
-        //so split countdown into 'countdown to time', and 'countdown for time'.
-    </script>
+	<canvas id="myCanvas" width="500" height="500"></canvas>
+	<script>
+		var ctx = document.getElementById("myCanvas").getContext('2d');
+		//since rotated around 0,0 - we now need to adjust the location
+		ctx.translate(250,250);
+		setInterval(drawCowntdown, 100);
+	</script>
+	<form id=ClockType>
+		<input type="radio" form="ClockType" id="Clock" name="mode" value=0 checked onchange="updateMode()">
+		<label for="Clock">Clock</label>
+		<span id="ClockTimescaleSection">
+		  	<input type="radio" form="ClockType" id="Clock_12H" name="time" value=12 checked onchange="setClockHours()">
+			<label for="Clock_12h">12 Hour</label>
+		  	<input type="radio" form="ClockType" id="Clock_24H" name="time" value=24 onchange="setClockHours()">
+		  	<label for="Clock_24h">24 Hour</label>
+		</span>
+		<br>
+		<input type="radio" form="ClockType" id="Timer" name="mode" value=1 onchange="updateMode()">
+		<label for="Timer">Timer</label>
+		<br>
+		<input type="radio" form="ClockType" id="CountdownTo" name="mode" value=2 onchange="updateMode()">
+		<label for="CountdownTo">Countdown to time</label>
+		<br>
+		<input type="radio" form="ClockType" id="CountdownFor" name="mode" value=3 onchange="updateMode()">
+		<label for="CountdownFor">Countdown for time</label>
+	</form> 
 </body>
+<footer>
+	<script>
+		updateSettings();
+		//TODO: finish building settings (then better centralise them)
+		//settings:
+		//mode 0: clock - 12/24 hour
+		//mode 1: timer - reset/stop/start (rename stopwatch)
+		//mode 2: countdown to/from - set target time input 
+		//mode 3: countdown for - set time to countdown for hr:mm:ss
+	</script>
+</footer>
 </html>
