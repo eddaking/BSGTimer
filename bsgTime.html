@@ -1,5 +1,6 @@
 <html>
 <head>
+<<<<<<< HEAD
 	<style>
 		body
 		{
@@ -24,11 +25,13 @@
 		}
 	</style>
 	<script>
-		//Modes
-			//0=clock
-			//1=timer
-			//2=countdown
 		var mode=0;
+		//Modes
+		const clock=0;
+		const countdownFrom=1;
+		const countdownTo=2;
+		const countdownFor=3;
+
 		var clockHours=12;
 
 		function updateSettings()
@@ -60,7 +63,7 @@
 
 		function showTimescale()
 		{
-			if(mode==0)
+			if(mode==clock)
 			{
 				document.getElementById("ClockTimescaleSection").style.display = "inline";
 			}
@@ -99,8 +102,8 @@
 			ctx.clearRect(canvas.width/-2, canvas.height/-2, canvas.width, canvas.height);
 			var d=new Date();
 			var forward=true;
-			if(mode==1)	 {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeTimer.getTime()));}
-			else if(mode==2 || mode==3)
+			if(mode==clock)	 {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeTimer.getTime()));}
+			else if(mode==countdownFrom || mode==countdownTo || mode==countdownFor)
 			{
 				//switch modes once we pass the 0
 				if(Date.now()>timeCountdown.getTime())
@@ -115,7 +118,7 @@
 			}
 			drawSegments(ctx,150,25,60,d.getSeconds(),forward);
 			drawSegments(ctx,100,45,60,d.getMinutes(),forward);
-			if(mode==0)
+			if(mode==clock)
 			{
 				drawSegments(ctx,50 ,45,clockHours,d.getHours()%clockHours,forward);
 			}
