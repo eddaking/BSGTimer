@@ -102,7 +102,7 @@
 			ctx.clearRect(canvas.width/-2, canvas.height/-2, canvas.width, canvas.height);
 			var d=new Date();
 			var forward=true;
-			if(mode==clock)	 {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()-timeTimer.getTime()));}
+			if(mode==clock)	 {d = new Date(Date.UTC(0,0,0,0,0,0,d.getTime()));}
 			else if(mode==countdownFrom || mode==countdownTo || mode==countdownFor)
 			{
 				//switch modes once we pass the 0
