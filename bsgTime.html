@@ -76,13 +76,16 @@
 		var timeTimer=	new Date(Date.UTC(2020,0,31,16,30,0,0));
 		var timeCountdown=new Date(Date.UTC(2020,0,31,16,30,0,0));
 		//new Date(year, month, day, hours, minutes, seconds, milliseconds)
-		function drawSegments(ctx,internalRadius,length,segments,showsegments,forward)
+		function drawSegments(ctx,internalRadius,length,fractionColoured,segments,showsegments,forward)
 		{
 			var angle=(Math.PI*2)/segments;
-			var maxWidth=0.76*((internalRadius+length)*2*Math.PI)/segments;
-			var minWidth=0.76*(internalRadius*2*Math.PI)/segments;
-			for (let index = 1; index <= segments; index++) {
-				if((forward==true & index <= showsegments) | (forward==false & index > segments-showsegments) ){
+			var maxWidth=fractionColoured*((internalRadius+length)*2*Math.PI)/segments;
+			var minWidth=fractionColoured*(internalRadius*2*Math.PI)/segments;
+			ctx.rotate(angle/2);
+			for (let index = 1; index <= segments; index++)
+			{
+				if((forward==true & index <= showsegments) | (forward==false & index > segments-showsegments))
+				{
 					ctx.fillStyle = '#F39F21';
 					ctx.beginPath();
 					ctx.moveTo(minWidth/-2,internalRadius*-1);
@@ -95,6 +98,7 @@
 				}
 				ctx.rotate(angle);
 			}
+			ctx.rotate(-angle/2);
 		}
 		function drawCowntdown(){
 			var canvas=document.getElementById("myCanvas");
@@ -116,15 +120,15 @@
 					forward=false;
 				}
 			}
-			drawSegments(ctx,150,25,60,d.getSeconds(),forward);
-			drawSegments(ctx,100,45,60,d.getMinutes(),forward);
+			drawSegments(ctx,150,25,0.76,60,d.getSeconds(),forward);
+			drawSegments(ctx,100,45,0.76,60,d.getMinutes(),forward);
 			if(mode==clock)
 			{
-				drawSegments(ctx,50 ,45,clockHours,d.getHours()%clockHours,forward);
+				drawSegments(ctx,50,45,0.85,clockHours,d.getHours()%clockHours,forward);
 			}
 			else
 			{
-				drawSegments(ctx,50 ,45,24,d.getHours(),forward);
+				drawSegments(ctx,50,45,0.76,24,d.getHours(),forward);
 			}
 		}
 	</script>
